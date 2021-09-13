@@ -6,11 +6,11 @@ namespace RxSharp.Infrastructure.Extensions
     {
         public static IDisposable SubscribeConsole<T>(
             this IObservable<T> observable,
-            string name="")
+            string name = "")
         {
             return observable.Subscribe(new ConsoleObserver<T>(name));
         }
-        
+
         private class ConsoleObserver<T> : IObserver<T>
         {
             private readonly string _name;
@@ -29,7 +29,6 @@ namespace RxSharp.Infrastructure.Extensions
             {
                 Console.WriteLine($"{_name} - OnError:");
                 Console.WriteLine($"\t {error}");
-
             }
 
             public void OnNext(T value)

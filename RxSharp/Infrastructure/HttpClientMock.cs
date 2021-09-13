@@ -1,24 +1,30 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using RxSharp.Models;
 
 namespace RxSharp.Infrastructure
 {
     public class HttpClientMock : IHttpClient
     {
         private readonly int _delayRequestMs;
+        private long _countOfRequests;
 
         public HttpClientMock(int delayRequestMs)
         {
             _delayRequestMs = delayRequestMs;
         }
 
-        public async Task<TRes> SendAsync<TReq, TRes>(TReq content, CancellationToken ct = default)
+        public async Task<FeatureData<TRes>> SendAsync<TReq, TRes>(FeatureData<TReq> content,
+            CancellationToken ct = default)
         {
-            Console.WriteLine($"Start delay {content}");
+            var requestNumber = Interlocked.Add(ref _countOfRequests, 1);
+            content.DebugData.Sent = DateTime.Now;
             await Task.Delay(_delayRequestMs, ct).ConfigureAwait(false);
-            Console.WriteLine($"End delay {content}");
-            return GenerateRandomResponse<TReq, TRes>(content);
+            var response = GenerateRandomResponse<TReq, TRes>(content.Data);
+            content.DebugData.Received = DateTime.Now;
+            content.DebugData.CountRequest = requestNumber;
+            return new FeatureData<TRes>(response, content.DebugData);
         }
 
         private TRes GenerateRandomResponse<TReq, TRes>(TReq content)
@@ -28,7 +34,7 @@ namespace RxSharp.Infrastructure
                 dynamic response = content;
                 return response;
             }
-            
+
             return default;
         }
     }

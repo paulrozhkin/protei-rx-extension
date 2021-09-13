@@ -1,9 +1,10 @@
 ﻿using System;
+using RxSharp.Models;
 
 namespace RxSharp.ApplicationLayer
 {
     public interface IBusinessCapabilityProcess
     {
-        IObservable<int> BusinessCapabilityItems();
+        IObservable<FeatureData<int>> BusinessCapabilityItems();
     }
 }

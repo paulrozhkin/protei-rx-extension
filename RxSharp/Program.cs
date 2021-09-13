@@ -9,7 +9,7 @@ namespace RxSharp
         {
             await ApplicationBuilder.RunAsync();
         }
-        
+
         private static Application ApplicationBuilder => new Application();
     }
 }
