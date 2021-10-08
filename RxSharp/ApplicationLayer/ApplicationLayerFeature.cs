@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -25,13 +26,13 @@ namespace RxSharp.ApplicationLayer
         public void SubscribeForHandleRecentData(IObservable<FeatureData<int>> observable)
         {
             observable
-                .Select(x => HandleRecentData(x).ToObservable())
-                .Concat()
+                .Select(x => Observable.FromAsync(() => HandleRecentDataAsync(x)))
+                .MergeBounded()
                 .TimeInterval()
                 .SubscribeConsole("HandleRecentItems");
         }
 
-        private async Task<FeatureData<int>> HandleRecentData(FeatureData<int> dataItem)
+        private async Task<FeatureData<int>> HandleRecentDataAsync(FeatureData<int> dataItem)
         {
             var response = await _client.SendAsync<int, int>(dataItem).ConfigureAwait(false);
             await Task.Delay(100);

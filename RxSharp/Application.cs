@@ -10,12 +10,12 @@ namespace RxSharp
     {
         public Task RunAsync()
         {
-            const int delayClientMs = 2000;
+            const int delayClientMs = 5000;
             var client = new HttpClientMock(delayClientMs);
 
             // Suppose we have some kind of business process that is constantly receiving new data.
-            const int amountOfData = 5;
-            const int delayBeforeDataCreatedMs = 250;
+            const int amountOfData = 500;
+            const int delayBeforeDataCreatedMs = 100;
             IBusinessCapabilityProcess
                 process = new LongRunningProcessGenerator(amountOfData, delayBeforeDataCreatedMs);
             var dataObservable = process.BusinessCapabilityItems();
